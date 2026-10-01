@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mənim Liqam - Turnir İdarəetmə Platforması</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px 10px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      color: var(--accent);
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="text"], input[type="number"] {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Table Styles */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #0f172a;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* Match List */
+    .match-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0f172a;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .match-teams {
+      font-weight: 600;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+
+    .match-score-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .match-score-inputs input {
+      width: 45px;
+      text-align: center;
+      padding: 6px;
+    }
+
+    .ad-banner {
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 20px 0;
+    }
+  </style>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🏆 Mənim Liqam</h1>
+    <p>İdman və Turnirlərin Avtomatlaşdırılmış İdarəetmə Mərkəzi</p>
+  </header>
+
+  <!-- Yuxarı Reklam Sahəsi -->
+  <div class="ad-banner">
+    📢 <b>Reklam Sahəsi</b> (Google AdSense və ya Lokal Sponsor Kodu)
+  </div>
+
+  <!-- 1. Liqa Yaratma Bölməsi -->
+  <div class="card">
+    <h2>➕ Yeni Liqa Yaradın</h2>
+    <div class="form-group">
+      <input type="text" id="leagueTitle" placeholder="Liqanın Adı (Məs: Bahar Turniri)" />
+      <input type="text" id="teamsList" placeholder="Komandalar (vergüllə ayırın: Qarabağ, Neftçi, Turan, Zirə)" />
+      <button class="btn" onclick="createNewLeague()">Liqanı Və Püşkatmanı Başlat</button>
+    </div>
+  </div>
+
+  <!-- 2. Canlı Xal Cədvəli -->
+  <div class="card">
+    <h2>📊 Canlı Turnir Cədvəli</h2>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Komanda</th>
+            <th>O</th>
+            <th>Q</th>
+            <th>H</th>
+            <th>M</th>
+            <th>Xal</th>
+          </tr>
+        </thead>
+        <tbody id="standingsBody">
+          <tr><td colspan="7" style="color: var(--text-muted);">Aktiv liqa tapılmadı. Yuxarıdan yeni liqa yaradın.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Oyun Cədvəli və Hesab Daxiletməsi -->
+  <div class="card">
+    <h2>⚽ Matç Nəticələri</h2>
+    <div id="matchesList">
+      <p style="color: var(--text-muted);">Komandaları daxil etdikdən sonra oyun cədvəli avtomatik bura yığılacaq.</p>
+    </div>
+  </div>
+
+  <!-- Aşağı Reklam Sahəsi -->
+  <div class="ad-banner">
+    📢 <b>Reklam Sahəsi</b>
+  </div>
+</div>
+
+<script>
+  // Firebase Konfiqurasiyası
+  const firebaseConfig = {
+    apiKey: "DEMO_KEY",
+    authDomain: "demo.firebaseapp.com",
+    projectId: "demo-project",
+    storageBucket: "demo.appspot.com",
+    messagingSenderId: "00000000",
+    appId: "1:00000000:web:00000000"
+  };
+
+  // Firebase İnitsializasiyası
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+
+  let state = {
+    teams: [],
+    matches: []
+  };
+
+  // Avtomatik Round-Robin Püşkatma Alqoritmi
+  function createNewLeague() {
+    const title = document.getElementById('leagueTitle').value.trim();
+    const rawTeams = document.getElementById('teamsList').value;
+
+    if (!title || !rawTeams) {
+      alert("Lütfən həm liqa adını, həm də komandaları daxil edin!");
+      return;
+    }
+
+    const teams = rawTeams.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+    if (teams.length < 2) {
+      alert("Liqa yaratmaq üçün ən azı 2 komanda yazılmalıdır!");
+      return;
+    }
+
+    const matches = [];
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        matches.push({
+          id: `m_${i}_${j}`,
+          teamA: teams[i],
+          teamB: teams[j],
+          scoreA: null,
+          scoreB: null
+        });
+      }
+    }
+
+    state = { name: title, teams: teams, matches: matches };
+
+    // Firebase-ə yazılır
+    db.collection("leagues").doc("active_league").set(state)
+      .then(() => alert("Liqa və oyun cədvəli uğurla yaradıldı!"))
+      .catch(err => {
+        console.warn("Firebase bağlantısı demo rejimindədir, lokal yaddaş istifadə olunur:", err);
+        renderAll();
+      });
+  }
+
+  // Real-time Verilənlər Bazası Dinləyicisi
+  try {
+    db.collection("leagues").doc("active_league").onSnapshot((doc) => {
+      if (doc.exists) {
+        state = doc.data();
+        renderAll();
+      }
+    });
+  } catch (e) {
+    console.log("Offline rejim");
+  }
+
+  function renderAll() {
+    renderStandings();
+    renderMatches();
+  }
+
+  function renderStandings() {
+    const stats = {};
+    state.teams.forEach(t => {
+      stats[t] = { played: 0, win: 0, draw: 0, loss: 0, points: 0 };
+    });
+
+    state.matches.forEach(m => {
+      if (m.scoreA !== null && m.scoreB !== null) {
+        stats[m.teamA].played++;
+        stats[m.teamB].played++;
+
+        if (m.scoreA > m.scoreB) {
+          stats[m.teamA].win++;
+          stats[m.teamA].points += 3;
+          stats[m.teamB].loss++;
+        } else if (m.scoreA < m.scoreB) {
+          stats[m.teamB].win++;
+          stats[m.teamB].points += 3;
+          stats[m.teamA].loss++;
+        } else {
+          stats[m.teamA].draw++;
+          stats[m.teamB].draw++;
+          stats[m.teamA].points += 1;
+          stats[m.teamB].points += 1;
+        }
+      }
+    });
+
+    const sorted = Object.keys(stats).sort((a, b) => stats[b].points - stats[a].points);
+    const tbody = document.getElementById('standingsBody');
+    tbody.innerHTML = '';
+
+    sorted.forEach((team, idx) => {
+      const s = stats[team];
+      tbody.innerHTML += `
+        <tr>
+          <td><b>${idx + 1}</b></td>
+          <td style="text-align: left; padding-left: 15px;"><b>${team}</b></td>
+          <td>${s.played}</td>
+          <td>${s.win}</td>
+          <td>${s.draw}</td>
+          <td>${s.loss}</td>
+          <td><b style="color: var(--primary);">${s.points}</b></td>
+        </tr>
+      `;
+    });
+  }
+
+  function renderMatches() {
+    const container = document.getElementById('matchesList');
+    container.innerHTML = '';
+
+    if (state.matches.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-muted);">Hələ matç yoxdur.</p>';
+      return;
+    }
+
+    state.matches.forEach((m, idx) => {
+      const valA = m.scoreA !== null ? m.scoreA : '';
+      const valB = m.scoreB !== null ? m.scoreB : '';
+
+      container.innerHTML += `
+        <div class="match-card">
+          <div class="match-teams">${m.teamA} <span style="color:var(--accent)">vs</span> ${m.teamB}</div>
+          <div class="match-score-inputs">
+            <input type="number" id="sc_a_${idx}" value="${valA}" min="0">
+            <span>:</span>
+            <input type="number" id="sc_b_${idx}" value="${valB}" min="0">
+            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="saveMatchScore(${idx})">Yaz</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function saveMatchScore(idx) {
+    const scoreA = document.getElementById(`sc_a_${idx}`).value;
+    const scoreB = document.getElementById(`sc_b_${idx}`).value;
+
+    if (scoreA === '' || scoreB === '') return;
+
+    state.matches[idx].scoreA = parseInt(scoreA);
+    state.matches[idx].scoreB = parseInt(scoreB);
+
+    db.collection("leagues").doc("active_league").set(state)
+      .then(() => renderAll())
+      .catch(() => renderAll());
+  }
+</script>
+
+</body>
+</html>
