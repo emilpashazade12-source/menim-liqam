@@ -1,409 +1,445 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mənim Liqam - Turnir İdarəetmə Platforması</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 20px 10px;
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 850px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    header h1 {
-      font-size: 2.2rem;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    header p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-
-    .card h2 {
-      font-size: 1.25rem;
-      color: var(--accent);
-      margin-bottom: 15px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    input[type="text"], input[type="number"] {
-      background: #0f172a;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: var(--primary);
-    }
-
-    .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background: var(--primary-hover);
-    }
-
-    /* Table Styles */
-    .table-responsive {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-      font-size: 0.95rem;
-    }
-
-    th, td {
-      padding: 12px 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      background: #0f172a;
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    tr:hover {
-      background: rgba(255,255,255,0.02);
-    }
-
-    /* Match List */
-    .match-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #0f172a;
-      padding: 12px 15px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
-
-    .match-teams {
-      font-weight: 600;
-      font-size: 0.95rem;
-      flex: 1;
-    }
-
-    .match-score-inputs {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .match-score-inputs input {
-      width: 45px;
-      text-align: center;
-      padding: 6px;
-    }
-
-    .ad-banner {
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed var(--border);
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin: 20px 0;
-    }
-  </style>
-
-  <!-- Firebase Compatibility SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mənim Liqam — İdman və Turnirlərin İdarəetmə Mərkəzi</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome İkonlar -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Xüsusi CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-[#0B1120] text-slate-100 font-sans antialiased min-h-screen flex flex-col md:flex-row">
 
-<div class="container">
-  <header>
-    <h1>🏆 Mənim Liqam</h1>
-    <p>İdman və Turnirlərin Avtomatlaşdırılmış İdarəetmə Mərkəzi</p>
-  </header>
-
-  <!-- Yuxarı Reklam Sahəsi -->
-  <div class="ad-banner">
-    📢 <b>Reklam Sahəsi</b> (Google AdSense və ya Lokal Sponsor Kodu)
-  </div>
-
-  <!-- 1. Liqa Yaratma Bölməsi -->
-  <div class="card">
-    <h2>➕ Yeni Liqa Yaradın</h2>
-    <div class="form-group">
-      <input type="text" id="leagueTitle" placeholder="Liqanın Adı (Məs: Bahar Turniri)" />
-      <input type="text" id="teamsList" placeholder="Komandalar (vergüllə ayırın: Qarabağ, Neftçi, Turan, Zirə)" />
-      <button class="btn" onclick="createNewLeague()">Liqanı Və Püşkatmanı Başlat</button>
-    </div>
-  </div>
-
-  <!-- 2. Canlı Xal Cədvəli -->
-  <div class="card">
-    <h2>📊 Canlı Turnir Cədvəli</h2>
-    <div class="table-responsive">
-      <table>
-        <thead>
-          <tr>
-            <th>№</th>
-            <th>Komanda</th>
-            <th>O</th>
-            <th>Q</th>
-            <th>H</th>
-            <th>M</th>
-            <th>Xal</th>
-          </tr>
-        </thead>
-        <tbody id="standingsBody">
-          <tr><td colspan="7" style="color: var(--text-muted);">Aktiv liqa tapılmadı. Yuxarıdan yeni liqa yaradın.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- 3. Oyun Cədvəli və Hesab Daxiletməsi -->
-  <div class="card">
-    <h2>⚽ Matç Nəticələri</h2>
-    <div id="matchesList">
-      <p style="color: var(--text-muted);">Komandaları daxil etdikdən sonra oyun cədvəli avtomatik bura yığılacaq.</p>
-    </div>
-  </div>
-
-  <!-- Aşağı Reklam Sahəsi -->
-  <div class="ad-banner">
-    📢 <b>Reklam Sahəsi</b>
-  </div>
-</div>
-
-<script>
-  // Firebase Konfiqurasiyası
-  const firebaseConfig = {
-    apiKey: "DEMO_KEY",
-    authDomain: "demo.firebaseapp.com",
-    projectId: "demo-project",
-    storageBucket: "demo.appspot.com",
-    messagingSenderId: "00000000",
-    appId: "1:00000000:web:00000000"
-  };
-
-  // Firebase İnitsializasiyası
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const db = firebase.firestore();
-
-  let state = {
-    teams: [],
-    matches: []
-  };
-
-  // Avtomatik Round-Robin Püşkatma Alqoritmi
-  function createNewLeague() {
-    const title = document.getElementById('leagueTitle').value.trim();
-    const rawTeams = document.getElementById('teamsList').value;
-
-    if (!title || !rawTeams) {
-      alert("Lütfən həm liqa adını, həm də komandaları daxil edin!");
-      return;
-    }
-
-    const teams = rawTeams.split(',').map(t => t.trim()).filter(t => t.length > 0);
-
-    if (teams.length < 2) {
-      alert("Liqa yaratmaq üçün ən azı 2 komanda yazılmalıdır!");
-      return;
-    }
-
-    const matches = [];
-    for (let i = 0; i < teams.length; i++) {
-      for (let j = i + 1; j < teams.length; j++) {
-        matches.push({
-          id: `m_${i}_${j}`,
-          teamA: teams[i],
-          teamB: teams[j],
-          scoreA: null,
-          scoreB: null
-        });
-      }
-    }
-
-    state = { name: title, teams: teams, matches: matches };
-
-    // Firebase-ə yazılır
-    db.collection("leagues").doc("active_league").set(state)
-      .then(() => alert("Liqa və oyun cədvəli uğurla yaradıldı!"))
-      .catch(err => {
-        console.warn("Firebase bağlantısı demo rejimindədir, lokal yaddaş istifadə olunur:", err);
-        renderAll();
-      });
-  }
-
-  // Real-time Verilənlər Bazası Dinləyicisi
-  try {
-    db.collection("leagues").doc("active_league").onSnapshot((doc) => {
-      if (doc.exists) {
-        state = doc.data();
-        renderAll();
-      }
-    });
-  } catch (e) {
-    console.log("Offline rejim");
-  }
-
-  function renderAll() {
-    renderStandings();
-    renderMatches();
-  }
-
-  function renderStandings() {
-    const stats = {};
-    state.teams.forEach(t => {
-      stats[t] = { played: 0, win: 0, draw: 0, loss: 0, points: 0 };
-    });
-
-    state.matches.forEach(m => {
-      if (m.scoreA !== null && m.scoreB !== null) {
-        stats[m.teamA].played++;
-        stats[m.teamB].played++;
-
-        if (m.scoreA > m.scoreB) {
-          stats[m.teamA].win++;
-          stats[m.teamA].points += 3;
-          stats[m.teamB].loss++;
-        } else if (m.scoreA < m.scoreB) {
-          stats[m.teamB].win++;
-          stats[m.teamB].points += 3;
-          stats[m.teamA].loss++;
-        } else {
-          stats[m.teamA].draw++;
-          stats[m.teamB].draw++;
-          stats[m.teamA].points += 1;
-          stats[m.teamB].points += 1;
-        }
-      }
-    });
-
-    const sorted = Object.keys(stats).sort((a, b) => stats[b].points - stats[a].points);
-    const tbody = document.getElementById('standingsBody');
-    tbody.innerHTML = '';
-
-    sorted.forEach((team, idx) => {
-      const s = stats[team];
-      tbody.innerHTML += `
-        <tr>
-          <td><b>${idx + 1}</b></td>
-          <td style="text-align: left; padding-left: 15px;"><b>${team}</b></td>
-          <td>${s.played}</td>
-          <td>${s.win}</td>
-          <td>${s.draw}</td>
-          <td>${s.loss}</td>
-          <td><b style="color: var(--primary);">${s.points}</b></td>
-        </tr>
-      `;
-    });
-  }
-
-  function renderMatches() {
-    const container = document.getElementById('matchesList');
-    container.innerHTML = '';
-
-    if (state.matches.length === 0) {
-      container.innerHTML = '<p style="color: var(--text-muted);">Hələ matç yoxdur.</p>';
-      return;
-    }
-
-    state.matches.forEach((m, idx) => {
-      const valA = m.scoreA !== null ? m.scoreA : '';
-      const valB = m.scoreB !== null ? m.scoreB : '';
-
-      container.innerHTML += `
-        <div class="match-card">
-          <div class="match-teams">${m.teamA} <span style="color:var(--accent)">vs</span> ${m.teamB}</div>
-          <div class="match-score-inputs">
-            <input type="number" id="sc_a_${idx}" value="${valA}" min="0">
-            <span>:</span>
-            <input type="number" id="sc_b_${idx}" value="${valB}" min="0">
-            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="saveMatchScore(${idx})">Yaz</button>
+  <!-- ================= AUTH SCREEN (LOGIN & SIGNUP) ================= -->
+  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1120]">
+    <div class="w-full max-w-6xl h-full md:h-[90vh] bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+      <!-- Left Hero Panel -->
+      <div class="hidden md:flex md:w-1/2 relative bg-cover bg-center flex-col justify-between p-10 border-r border-slate-800" style="background-image: linear-gradient(to bottom, rgba(15,23,42,0.4), rgba(15,23,42,0.9)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1000');">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-[#10B981] rounded-xl flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-white">Mənim Liqam</h1>
+            <p class="text-xs text-slate-400">YOUR GAME. YOUR LEAGUE.</p>
           </div>
         </div>
-      `;
-    });
-  }
+        <div>
+          <span class="text-xs uppercase tracking-widest text-[#10B981] font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">BUILT FOR THE BEAUTIFUL GAME</span>
+          <h2 class="text-4xl font-extrabold text-white leading-tight mt-4">Your people.<br>Your pitch.<br>Your league.</h2>
+          <p class="text-sm text-slate-300 mt-3 max-w-md">From the first whistle to the final table. Bring your football community together, on and off the pitch.</p>
+          <div class="flex gap-8 mt-8 border-t border-slate-700/50 pt-6">
+            <div>
+              <p class="text-2xl font-bold text-white">1,200+</p>
+              <p class="text-xs text-slate-400">Players connected</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-white">80+</p>
+              <p class="text-xs text-slate-400">Local teams</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-white">One</p>
+              <p class="text-xs text-slate-400">Football community</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">BAKU, AZERBAIJAN — EVERY GAME MATTERS</p>
+      </div>
 
-  function saveMatchScore(idx) {
-    const scoreA = document.getElementById(`sc_a_${idx}`).value;
-    const scoreB = document.getElementById(`sc_b_${idx}`).value;
+      <!-- Right Form Panel -->
+      <div class="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center gap-2 md:hidden">
+            <div class="w-8 h-8 bg-[#10B981] rounded-lg flex items-center justify-center text-slate-950 font-bold">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+            <span class="font-bold text-lg text-white">Mənim Liqam</span>
+          </div>
+          <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 ml-auto">
+            <button id="tab-login" onclick="switchAuthTab('login')" class="px-5 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-white transition-all">Log In</button>
+            <button id="tab-signup" onclick="switchAuthTab('signup')" class="px-5 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all">Sign Up</button>
+          </div>
+        </div>
 
-    if (scoreA === '' || scoreB === '') return;
+        <div id="login-box">
+          <h2 class="text-2xl font-bold text-white">Back in the game.</h2>
+          <p class="text-xs text-slate-400 mt-1 mb-6">Welcome back. Your squad, stats and next kick-off are waiting.</p>
+          <button onclick="handleGoogleAuth()" class="w-full py-3 px-4 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl text-sm font-semibold flex items-center justify-center gap-3 transition-all mb-4 text-white">
+            <i class="fa-brands fa-google text-red-500"></i> Continue with Google
+          </button>
+          <div class="relative flex py-3 items-center">
+            <div class="flex-grow border-t border-slate-800"></div>
+            <span class="flex-shrink mx-4 text-[10px] uppercase tracking-widest text-slate-500 font-semibold">OR WITH EMAIL</span>
+            <div class="flex-grow border-t border-slate-800"></div>
+          </div>
+          <form onsubmit="handleLogin(event)" class="space-y-4 mt-2">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Email address</label>
+              <input type="email" id="login-email" required placeholder="rashad.aliyev@gmail.com" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#10B981] transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+              <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#10B981] transition-all">
+            </div>
+            <button type="submit" class="w-full py-3.5 bg-[#10B981] hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+              Log In <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </form>
+        </div>
 
-    state.matches[idx].scoreA = parseInt(scoreA);
-    state.matches[idx].scoreB = parseInt(scoreB);
+        <div id="signup-box" class="hidden">
+          <h2 class="text-2xl font-bold text-white">Find your football.</h2>
+          <p class="text-xs text-slate-400 mt-1 mb-6">Join as a player. Build your team or run a league whenever you're ready.</p>
+          <form onsubmit="handleSignup(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Full name</label>
+              <input type="text" id="signup-name" required placeholder="Rashad Aliyev" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Email address</label>
+              <input type="email" id="signup-email" required placeholder="rashad.aliyev@gmail.com" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+              <input type="password" id="signup-password" required placeholder="••••••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition-all">
+            </div>
+            <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-2.5 text-xs text-emerald-400">
+              <i class="fa-solid fa-user-check mt-0.5"></i>
+              <span>Start as Player / Viewer. Creating a team or league adds a manager role to this account.</span>
+            </div>
+            <button type="submit" class="w-full py-3.5 bg-[#10B981] hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+              Create Account <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    db.collection("leagues").doc("active_league").set(state)
-      .then(() => renderAll())
-      .catch(() => renderAll());
-  }
-</script>
+  <!-- ================= APP MAIN CONTAINER ================= -->
+  <aside class="w-full md:w-64 bg-[#0F172A] border-r border-slate-800/80 p-5 flex flex-col justify-between shrink-0">
+    <div>
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-9 h-9 bg-[#10B981] rounded-xl flex items-center justify-center text-slate-950 font-bold text-lg shadow-lg shadow-emerald-500/20">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-white text-base tracking-tight">Mənim Liqam</h1>
+          <p class="text-[10px] text-slate-400">YOUR GAME. YOUR LEAGUE.</p>
+        </div>
+      </div>
 
+      <!-- User Profile Card in Sidebar -->
+      <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-xl mb-6 flex items-center gap-3">
+        <div class="w-9 h-9 bg-emerald-500/20 border border-emerald-500/30 rounded-lg flex items-center justify-center text-emerald-400 font-bold">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="overflow-hidden">
+          <p id="user-display-name" class="text-xs font-bold text-white truncate">Rashad Aliyev</p>
+          <span id="user-display-role" class="inline-block text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md font-medium mt-0.5">Player / Viewer</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="space-y-1.5 text-xs font-medium">
+        <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-emerald-500/10 text-[#10B981] border border-emerald-500/20 font-semibold">
+          <i class="fa-solid fa-grip"></i> Dashboard / Home
+        </button>
+        <button onclick="navigateTo('league')" id="nav-league" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+          <i class="fa-solid fa-trophy"></i> My Leagues (Liqam)
+        </button>
+        <button onclick="navigateTo('squad')" id="nav-squad" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+          <i class="fa-solid fa-shield-halved"></i> My Teams (Takımlarım)
+        </button>
+        <button onclick="navigateTo('dashboard')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+          <i class="fa-regular fa-[#10B981] fa-compass"></i> Explore Leagues
+        </button>
+        <button onclick="navigateTo('dashboard')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all">
+          <i class="fa-solid fa-users"></i> Explore Teams
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Action Buttons -->
+    <div class="space-y-2 mt-6 pt-6 border-t border-slate-800/80">
+      <button onclick="openCreateLeagueModal()" class="w-full py-2.5 bg-[#10B981] hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
+        <i class="fa-solid fa-plus"></i> Create League
+      </button>
+      <button onclick="openCreateTeamModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all">
+        <i class="fa-solid fa-plus"></i> Create Team
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT VIEWS ================= -->
+  <main class="flex-1 p-4 md:p-8 overflow-y-auto min-h-screen">
+
+    <!-- VIEW 1: DASHBOARD / PLAYER VIEW -->
+    <section id="view-dashboard" class="space-y-6 max-w-7xl mx-auto">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-[#10B981] font-semibold">YOUR FOOTBALL, CONNECTED</p>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Good evening, <span id="dash-user-name">Rashad</span> 👋</h2>
+        <p class="text-xs text-slate-400 mt-1">Your game at a glance. Make the next match count.</p>
+      </div>
+
+      <!-- Quick Action Banners -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/30 p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <p class="text-xs text-emerald-400 font-medium">Want to host a tournament?</p>
+            <h3 class="text-lg font-bold text-white mt-1">Create a League</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Unlock League Manager tools</p>
+          </div>
+          <button onclick="openCreateLeagueModal()" class="w-12 h-12 bg-[#10B981] hover:bg-emerald-400 text-slate-950 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/20 transition-all">
+            <i class="fa-solid fa-trophy"></i>
+          </button>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-medium">Want to manage a squad?</p>
+            <h3 class="text-lg font-bold text-white mt-1">Create a Team</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Unlock Team Manager tools</p>
+          </div>
+          <button onclick="openCreateTeamModal()" class="w-12 h-12 bg-slate-800 hover:bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-xl border border-slate-700 transition-all">
+            <i class="fa-solid fa-shield-halved"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Season Stats Overview -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <p class="text-xs text-slate-400">Goals</p>
+          <p class="text-3xl font-extrabold text-white mt-1">6</p>
+          <p class="text-[10px] text-emerald-400 mt-1">+2 last match</p>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <p class="text-xs text-slate-400">Assists</p>
+          <p class="text-3xl font-extrabold text-white mt-1">4</p>
+          <p class="text-[10px] text-emerald-400 mt-1">3 chances created</p>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <p class="text-xs text-slate-400">Cards (Yellow / Red)</p>
+          <p class="text-3xl font-extrabold text-white mt-1">1 / 0</p>
+          <p class="text-[10px] text-slate-400 mt-1">Clean record</p>
+        </div>
+      </div>
+
+      <!-- Match Countdown & Standings Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Next Match Widget -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs text-emerald-400 uppercase tracking-wider font-semibold">NEXT KICK-OFF</span>
+              <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">MATCHWEEK 9</span>
+            </div>
+            <div class="flex items-center justify-around py-4">
+              <div class="text-center">
+                <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-emerald-400 text-2xl font-bold mx-auto mb-2">BU</div>
+                <p class="font-bold text-white text-sm">Baku United</p>
+                <p class="text-[10px] text-slate-400 uppercase">HOME</p>
+              </div>
+              <div class="text-center">
+                <span class="text-2xl font-black text-slate-400">VS</span>
+                <p class="text-xs text-slate-400 mt-1">20:00</p>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-300 text-2xl font-bold mx-auto mb-2">SA</div>
+                <p class="font-bold text-white text-sm">Sabail Athletic</p>
+                <p class="text-[10px] text-slate-400 uppercase">AWAY</p>
+              </div>
+            </div>
+            <div class="flex justify-between items-center mt-4 border-t border-slate-800 pt-4 text-xs">
+              <p class="text-slate-400">Sun, 25 Oct 2026 — Baku Sports Park</p>
+              <div class="text-right">
+                <p class="text-emerald-400 font-mono font-bold text-base">02 : 06 : 18</p>
+                <p class="text-[9px] text-slate-500">DAYS HRS MINS</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- League Standings Table -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+            <h3 class="font-bold text-white text-sm mb-4">League Standings</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="text-slate-500 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="py-2 px-3">#</th>
+                    <th class="py-2 px-3">Club</th>
+                    <th class="py-2 px-3">P</th>
+                    <th class="py-2 px-3">W</th>
+                    <th class="py-2 px-3">D</th>
+                    <th class="py-2 px-3">L</th>
+                    <th class="py-2 px-3">GD</th>
+                    <th class="py-2 px-3 font-bold">PTS</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/50">
+                  <tr><td class="py-3 px-3">1</td><td class="font-bold text-white py-3 px-3">Caspian FC</td><td>8</td><td>6</td><td>1</td><td>1</td><td>+14</td><td class="font-bold text-emerald-400">19</td></tr>
+                  <tr class="bg-emerald-500/10 border-l-2 border-[#10B981]"><td class="py-3 px-3">2</td><td class="font-bold text-white py-3 px-3">Baku United</td><td>8</td><td>5</td><td>2</td><td>1</td><td>+10</td><td class="font-bold text-emerald-400">17</td></tr>
+                  <tr><td class="py-3 px-3">3</td><td class="font-bold text-white py-3 px-3">Sabail Athletic</td><td>8</td><td>4</td><td>2</td><td>2</td><td>+6</td><td class="font-bold text-emerald-400">14</td></tr>
+                  <tr><td class="py-3 px-3">4</td><td class="font-bold text-white py-3 px-3">Khazar City</td><td>8</td><td>4</td><td>1</td><td>3</td><td>+3</td><td class="font-bold text-emerald-400">13</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Join via Code Widget -->
+        <div class="space-y-6">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+            <h3 class="font-bold text-white text-sm">Join via Code</h3>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Got an invitation? One code connects you to a team or a league.</p>
+            <form onsubmit="handleJoinCode(event)" class="space-y-3">
+              <input type="text" id="invite-code-input" required placeholder="e.g. TM-4728 or LG-9842" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white uppercase focus:outline-none focus:border-[#10B981]">
+              <button type="submit" class="w-full py-3 bg-[#10B981] hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i> Find team or league
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: SQUAD CONTROL ROOM (TEAM MANAGER) -->
+    <section id="view-squad" class="hidden space-y-6 max-w-7xl mx-auto">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="text-xs uppercase tracking-widest text-[#10B981] font-semibold">SQUAD CONTROL ROOM</span>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Baku United</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Your squad. Your starting seven. Your next win.</p>
+        </div>
+      </div>
+
+      <!-- Main Squad & Lineup Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Squad Roster List -->
+        <div class="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+          <h3 class="font-bold text-white text-sm mb-4">Squad roster</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="text-slate-500 uppercase border-b border-slate-800">
+                <tr>
+                  <th class="py-2 px-3">PLAYER</th>
+                  <th class="py-2 px-3">POS</th>
+                  <th class="py-2 px-3">MP</th>
+                  <th class="py-2 px-3">G</th>
+                  <th class="py-2 px-3">A</th>
+                  <th class="py-2 px-3">STATUS</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/50">
+                <tr><td class="font-bold text-white py-3 px-3">Kamran Safarov</td><td>GK</td><td>8</td><td>0</td><td>0</td><td><span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Available</span></td></tr>
+                <tr><td class="font-bold text-white py-3 px-3">Orkhan Karimov</td><td>DEF</td><td>8</td><td>1</td><td>1</td><td><span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Available</span></td></tr>
+                <tr><td class="font-bold text-white py-3 px-3">Murad Huseynov</td><td>DEF</td><td>7</td><td>0</td><td>2</td><td><span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Available</span></td></tr>
+                <tr class="bg-emerald-500/10"><td class="font-bold text-white py-3 px-3">Rashad Aliyev (C)</td><td>MID</td><td>8</td><td>6</td><td>4</td><td><span class="text-emerald-400 font-bold">Captain</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pending Player Requests Section -->
+          <div class="mt-8 border-t border-slate-800 pt-6">
+            <h4 class="font-bold text-white text-xs mb-3">Player requests (Pending)</h4>
+            <div id="pending-requests" class="space-y-3">
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-white">Javid Suleymanov</p>
+                  <p class="text-[10px] text-slate-400">MID · Requested via TM-4728</p>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="approvePlayer(this)" class="px-3 py-1.5 bg-[#10B981] text-slate-950 font-bold text-[11px] rounded-lg">Approve</button>
+                  <button onclick="declinePlayer(this)" class="px-3 py-1.5 bg-slate-800 text-slate-300 font-semibold text-[11px] rounded-lg">Decline</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pitch Lineup Selector & Team Code -->
+        <div class="space-y-6">
+          <!-- Tactica Field -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+            <h3 class="font-bold text-white text-sm mb-2">Lineup selector (2-3-1)</h3>
+            <div class="w-full h-80 bg-emerald-950/40 border border-emerald-500/30 rounded-xl relative p-4 flex flex-col justify-between items-center overflow-hidden">
+              <div class="w-full text-center border-b border-emerald-500/20 pb-1"><span class="text-[9px] text-emerald-400 font-mono">ATTACK</span></div>
+              <div class="w-8 h-8 rounded-full bg-[#10B981] text-slate-950 font-bold flex items-center justify-center text-xs shadow-lg">9</div>
+              <div class="flex justify-around w-full">
+                <div class="w-7 h-7 rounded-full bg-slate-800 border border-emerald-400 text-emerald-400 font-bold flex items-center justify-center text-[10px]">7</div>
+                <div class="w-7 h-7 rounded-full bg-slate-800 border border-emerald-400 text-emerald-400 font-bold flex items-center justify-center text-[10px]">10</div>
+                <div class="w-7 h-7 rounded-full bg-slate-800 border border-emerald-400 text-emerald-400 font-bold flex items-center justify-center text-[10px]">8</div>
+              </div>
+              <div class="flex justify-around w-2/3">
+                <div class="w-7 h-7 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-[10px]">4</div>
+                <div class="w-7 h-7 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-[10px]">5</div>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white text-white font-bold flex items-center justify-center text-xs">1</div>
+            </div>
+            <button class="w-full mt-4 py-2.5 bg-[#10B981] text-slate-950 font-bold rounded-xl text-xs">Save lineup</button>
+          </div>
+
+          <!-- Team Invite Code Box -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+            <h3 class="font-bold text-white text-sm">Team invite code</h3>
+            <p class="text-xs text-slate-400 mt-1 mb-3">Share with players to grow your squad.</p>
+            <div class="p-4 bg-slate-950 border border-dashed border-emerald-500/40 rounded-xl text-center">
+              <p id="team-code-display" class="text-2xl font-mono font-bold text-[#10B981] tracking-widest">TM-4728</p>
+            </div>
+            <button onclick="copyCode('TM-4728')" class="w-full mt-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-700">
+              <i class="fa-regular fa-copy"></i> Copy Code
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: LEAGUE CONTROL ROOM (LEAGUE MANAGER) -->
+    <section id="view-league" class="hidden space-y-6 max-w-7xl mx-auto">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-[#10B981] font-semibold">LEAGUE CONTROL ROOM</span>
+        <h2 class="text-3xl font-extrabold text-white mt-1">Baku Sunday League</h2>
+        <p class="text-xs text-slate-400 mt-0.5">2026/27 season · Baku, Azerbaijan · 7-a-side football</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <h3 class="font-bold text-white text-sm">Fixtures & Match Control</h3>
+          <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-white">Baku United vs Khazar City</p>
+              <p class="text-[10px] text-slate-400">Matchweek 8 · Referee: E. Mammadov</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="number" placeholder="0" class="w-10 bg-slate-900 border border-slate-700 text-center text-xs py-1 rounded text-white">
+              <span class="text-xs text-slate-500">-</span>
+              <input type="number" placeholder="0" class="w-10 bg-slate-900 border border-slate-700 text-center text-xs py-1 rounded text-white">
+              <button class="px-3 py-1 bg-[#10B981] text-slate-950 font-bold text-xs rounded">Save</button>
+            </div>
+          </div>
+          <button class="w-full py-3 bg-slate-800 text-white font-bold rounded-xl text-xs border border-slate-700 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-shuffle"></i> Generate Fixtures (Püşkatma)
+          </button>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+          <h3 class="font-bold text-white text-sm">League invite code</h3>
+          <p class="text-xs text-slate-400 mt-1 mb-3">Invite team captains to register their squads.</p>
+          <div class="p-4 bg-slate-950 border border-dashed border-emerald-500/40 rounded-xl text-center">
+            <p class="text-2xl font-mono font-bold text-[#10B981] tracking-widest">LG-9842</p>
+          </div>
+          <button onclick="copyCode('LG-9842')" class="w-full mt-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-700">
+            <i class="fa-regular fa-copy"></i> Copy Code
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
