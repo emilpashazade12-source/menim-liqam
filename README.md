@@ -1,1 +1,1 @@
-# menim-liqam
+# MenimLiqam.az
